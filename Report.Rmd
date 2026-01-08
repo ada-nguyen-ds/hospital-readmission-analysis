@@ -1,0 +1,198 @@
+---
+title: "Readmission"
+author: "Ada"
+date: "2026-01-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+library(tidyverse)
+library(lme4)        
+library(broom.mixed) 
+library(emmeans)    
+source("Cleaning&Joining.R") 
+```
+## 1. Introduction
+Hospital readmission rate is a widely used quality indicator that reflects both patient outcomes and the effectiveness of healthcare delivery systems. High readmission rates may indicate gaps in care coordination, socioeconomic barriers, or structural differences across hospitals. Understanding the drivers of readmission rates is critical for improving healthcare quality, controlling costs, and informing policy decisions.
+
+## 2. Research Objectives
+The purpose of this study is to examine the factors associated with hospital readmission rates, with a particular focus on:
+•	Hospital characteristics (ownership type, participation in readmission programs)
+•	Socioeconomic status (SES) indicators at the regional level, and
+•	Between-hospital variability after accounting for observed factors.
+## 3. Data and Methods
+
+### 3.1 Data Sources
+This study uses hospital-level and regional-level data, including readmission rates, hospital ownership, program participation, population size, and socioeconomic indicators such as poverty rate, unemployment rate, and uninsured rate.
+
+### 3.2 Statistical Model
+A linear mixed-effects model was employed to account for clustering of observations within hospitals by including a random intercept for provider ID.
+```{r mixed-model, echo=FALSE}
+m_final <- lmer(
+  err ~ readm_program + hospital_ownership +
+    log1p(total_population) +
+    poverty_rate + unemployment_rate + uninsured_rate +
+    (1 | provider_id),
+  data = final_clean
+)
+
+summary(m_final)
+```
+
+## 4.Results (EDA, plots, interpretation)
+### 4.1 Distribution of ERR by Hospital Ownership
+```{r ownership-boxplot, echo=FALSE}
+final_clean %>%
+  mutate(
+    hospital_ownership = str_wrap(str_squish(hospital_ownership), width = 28),
+    hospital_ownership = fct_reorder(hospital_ownership, err, .fun = median, na.rm = TRUE)
+  ) %>%
+  ggplot(aes(x = hospital_ownership, y = err, fill = hospital_ownership)) +
+  geom_boxplot(alpha = 0.7, outlier_alpha = 0.25, outlier_size = 1.1, width = 0.65) +
+  coord_flip(clip = "off") +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "none",
+    plot.title = element_text(face = "bold", size = 14, hjust = 0),
+    axis.title.y = element_blank(),
+    panel.grid.major.y = element_blank(),
+    plot.margin = margin(10, 30, 10, 10)
+  ) +
+  labs(
+    title = "Distribution of ERR by Hospital Ownership",
+    y = "Excess Readmission Ratio (ERR)"
+  )
+```
+Figure 1 presents the distribution of the readmission outcome (ERR) across hospital ownership types. Physician-owned hospitals exhibit a lower median ERR compared to most other ownership categories. However, the interquartile range is not uniformly smaller, and there is considerable overlap in ERR distributions across ownership types, suggesting that hospital ownership alone does not fully explain differences in readmission rates.
+
+### 4.2 SES Effect Plots
+```{r poverty-effect, echo=FALSE}
+plot(ggpredict(m_final_sc, "pov_sc"))   + geom_ribbon(aes(ymin = conf.low, ymax = conf.high), fill = "#1B9E77", alpha = 0.35) +
+  geom_line(color = "#B3E2CD", linewidth = 1.2) +
+  labs(title = "Effect of Poverty (1 SD) on ERR")
+p_pov <- plot(ggpredict(m_final_sc, "pov_sc")) +
+  labs(
+    title = "Effect of Poverty on Excess Readmission Ratio",
+    subtitle = "Poverty scaled by 1 standard deviation",
+    x = "Poverty Rate (standardized, SD units)",
+    y = "Predicted ERR"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(size = 11, color = "gray40"),
+    axis.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  ) 
+```
+Figure 2 illustrates the marginal effect of poverty (standardized to one standard deviation units) on the excess readmission ratio (ERR). The predicted ERR increases monotonically with higher poverty levels, indicating a positive association between area-level poverty and readmission risk. The shaded band represents the 95% confidence interval, reflecting uncertainty around the estimated effect while maintaining a consistent upward trend.
+
+```{r unemployment-effect, echo=FALSE}
+plot(ggpredict(m_final_sc, "unemp_sc")) + geom_ribbon(aes(ymin = conf.low, ymax = conf.high), fill = "#FDD0A2", alpha = 0.35) +
+  geom_line(color = "#D95F02", linewidth = 1.2) +
+  labs(
+    title = "Effect of Unemployment on Excess Readmission Ratio",
+    subtitle = "Unemployment rate scaled by 1 standard deviation",
+    x = "Unemployment Rate (standardized, SD units)",
+    y = "Predicted ERR"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "gray40"),
+    axis.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+```
+Figure 3 depicts the marginal effect of unemployment (standardized to one standard deviation units) on the excess readmission ratio (ERR). Higher unemployment levels are associated with higher predicted ERR, indicating a positive relationship between area-level unemployment and readmission risk. The shaded region represents the 95% confidence interval around the estimated effect, reflecting uncertainty while preserving a consistent upward trend.
+Predicted ERR increases with higher unemployment, with a consistent positive trend across the observed range.
+
+```{r uninsurance-effect, echo=FALSE}
+plot(ggpredict(m_final_sc, "unins_sc")) + geom_ribbon(aes(ymin = conf.low, ymax = conf.high), fill = "#DADAEB", alpha = 0.35) +
+  geom_line(color = "#7570B3", linewidth = 1.2) +
+  labs(
+    title = "Effect of Uninsured Population on Excess Readmission Ratio",
+    subtitle = "Uninsured rate scaled by 1 standard deviation",
+    x = "Uninsured Rate (standardized, SD units)",
+    y = "Predicted ERR"
+  ) +
+  theme_minimal(base_size = 12) +   
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = "gray40"),
+    axis.title = element_text(face = "bold"),
+    panel.grid.minor = element_blank()
+  )
+```
+Figure 4 shows the marginal effect of the uninsured rate (standardized to one standard deviation units) on the excess readmission ratio (ERR). The predicted ERR exhibits a slight downward trend as the uninsured rate increases. However, the wide confidence intervals and substantial overlap across the range indicate that this association is weak and should be interpreted with caution.
+
+### 4.3 Coefficient Plot
+```{r coefficient-plot, echo=FALSE}
+coef_df <- tidy(m_final_sc, effects = "fixed", conf.int = TRUE) %>% filter(term != "(Intercept)")
+coef_df <- coef_df %>%
+  mutate(sig = ifelse(conf.low > 0 | conf.high < 0,
+                      "Significant", "Not significant"))
+
+ggplot(coef_df, aes(x = reorder(term, estimate), y = estimate, color = sig)) +
+  geom_point(size = 3) +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) +
+  coord_flip() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "grey40") +
+  scale_color_manual(values = c(
+    "Significant" = "#1F4E79",
+    "Not significant" = "grey60"
+  )) +
+  theme_minimal(base_size = 13) +
+  theme(
+    legend.title = element_blank(),
+    plot.title = element_text(face = "bold")
+  ) +
+  labs(
+    title = "Fixed Effects with Statistical Significance (95% CI)",
+    x = NULL,
+    y = "Coefficient estimate"
+  )
+```
+Figure 5 presents the estimated fixed effects from the mixed-effects model, with points representing coefficient estimates and horizontal lines indicating 95% confidence intervals. All continuous covariates are standardized to one standard deviation. Positive coefficients indicate higher ERR relative to the reference, while negative coefficients indicate lower ERR.
+
+### 4.4 Random Effect
+```{r random-effects, echo=FALSE}
+re <- ranef(m_final_sc)$provider_id |> 
+  as.data.frame() |>
+  tibble::rownames_to_column("provider_id") |>
+  dplyr::rename(random_intercept = `(Intercept)`) |>
+  dplyr::arrange(random_intercept) |>
+  dplyr::mutate(provider_id = factor(provider_id, levels = provider_id))
+
+ggplot(re, aes(random_intercept, provider_id)) +
+  geom_point(color = "#4D4D4D", size = 2.5) +
+  geom_vline(xintercept = 0, linetype = "dashed",
+             color = "#B22222", linewidth = 0.8) +
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14),
+    axis.text.y = element_blank(),
+    panel.grid.major.y = element_blank()
+  ) +
+  labs(
+    title = "Hospital Random Effects (Caterpillar Plot)",
+    x = "Random intercept (deviation from overall mean)",
+    y = "Hospital"
+  )
+```
+Figure 6 shows considerable variation in hospital-specific random intercepts, indicating meaningful between-hospital differences in baseline readmission outcomes even after adjusting for observed hospital and socioeconomic factors.
+
+## 5. Discussion and Policy Implications
+### 5.1 Key findings
+After adjusting for hospital characteristics and regional socioeconomic factors, poverty rate and unemployment rate were positively and significantly associated with higher readmission rates. Larger population size was also associated with higher readmission rates.
+Among hospital ownership types, physician-owned hospitals exhibited significantly lower readmission rates compared to the reference ownership group. Other ownership categories showed weaker or non-significant differences.
+The random effects indicated substantial between-hospital variability, supporting the use of a mixed-effects modeling approach.
+
+### 5.2 Policy & Practical Recommendations
+The findings suggest that hospital readmission rates are influenced not only by hospital characteristics but also by broader socioeconomic conditions. Interventions aimed at reducing readmissions should incorporate social risk adjustment and targeted community-level support in high-poverty and high-unemployment areas.
+Policy efforts should also consider best practices from physician-owned hospitals and address structural inefficiencies across ownership types.
+
