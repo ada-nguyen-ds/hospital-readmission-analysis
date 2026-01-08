@@ -22,8 +22,11 @@ characteristics and county-level socioeconomic factors.
 - Physician-owned hospitals show lower adjusted ERR.
 
 ## Outputs
-- 📄 HTML Report: `report/readmission_report.html`
-- 📄 PDF Report: `report/readmission_report.pdf`
+- 📄 **HTML Report**:  
+  [View HTML report](Hospital%20Readmission%20Report.html)
+
+- 📄 **PDF Report**:  
+  [Download PDF report](Hospital%20Readmission%20Report.pdf)
 
 ## Tools
 R, tidyverse, lme4, emmeans, ggeffects
