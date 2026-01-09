@@ -29,10 +29,10 @@ The analysis focuses on identifying structural and socioeconomic drivers of read
   👉 https://ada-nguyen-ds.github.io/hospital-readmission-analysis/
 
 - 📄 **HTML Report (repository file)**  
-  👉 [Open HTML file](Hospital%20Readmission%20Report.html)
+  👉 [Open HTML file]readmissions report.html
 
 - 📄 **PDF Report**  
-  👉 [Download PDF](Hospital%20Readmission%20Report.pdf)
+  👉 [Download PDF]readmissions report.pdf
 
 
 ## Tools
