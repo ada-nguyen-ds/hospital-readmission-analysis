@@ -25,15 +25,11 @@ The analysis focuses on identifying structural and socioeconomic drivers of read
 
 
 ## Outputs
-- 🌐 **Live HTML Report (recommended)**  
-  👉 https://ada-nguyen-ds.github.io/hospital-readmission-analysis/
+🌐 **Live HTML Report (Recommended)**  
+👉 https://ada-nguyen-ds.github.io/hospital-readmission-analysis/
 
-- 📄 **HTML Report (repository file)**  
-  👉 [Open HTML Report](https://github.com/ada-nguyen-ds/hospital-readmission-analysis/blob/main/readmissions%20report.html)
-
-- 📄 **PDF Report**  
-  👉 [[Download PDF](https://github.com/ada-nguyen-ds/hospital-readmission-analysis/blob/main/readmissions%20report.pdf)
-
+📥 **PDF Report**  
+👉 [Download PDF](https://github.com/ada-nguyen-ds/hospital-readmission-analysis/blob/main/readmissions%20report.pdf)
 
 ## Tools
 R, tidyverse, lme4, emmeans, ggeffects
