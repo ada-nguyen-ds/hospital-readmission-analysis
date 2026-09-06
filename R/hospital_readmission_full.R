@@ -13,7 +13,7 @@ suppressPackageStartupMessages({
 
 # Expected project structure:
 # data/readmission.csv, data/hospitals.csv, data/zip_fips.csv, data/ahrf.csv
-# R/hospital_readmission_full_pipeline.R, output/, visuals/
+# R/hospital_readmission_full.R, output/, visuals/, report/
 raw_dir <- here("data")
 out_dir <- here("output")
 visual_dir <- here("visuals")
