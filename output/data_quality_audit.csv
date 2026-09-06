@@ -1,0 +1,10 @@
+metric,value
+Raw CMS readmission rows,18510
+Valid CMS hospital-measure rows,8121
+Valid CMS providers,2496
+Rows after corrected joins,8121
+Providers after corrected joins,2496
+Duplicate provider-measure keys,0
+Rows with county FIPS,8035
+Rows complete for mixed model,7946
+Hospital name mismatches,278
