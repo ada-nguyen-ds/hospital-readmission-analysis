@@ -1,0 +1,4 @@
+model,call,Model,df,AIC,BIC,logLik,Test,L.Ratio,p-value
+null_model,"lme.formula(fixed = err ~ measure, data = dat, random = ~1 |     provider_id, method = ""ML"", control = model_control)",1,8,-18563.393934354906,-18507.552556709106,9289.696967177453,,NA,NA
+base_model,"lme.formula(fixed = err ~ measure + ownership_group + emergency_services,     data = dat, random = ~1 | provider_id, method = ""ML"", control = model_control)",2,12,-18673.589549610606,-18589.827483141908,9348.794774805303,1 vs 2,118.19561525569952,1.2971998322644822e-24
+ses_model,"lme.formula(fixed = err ~ measure + ownership_group + emergency_services +     z_poverty + z_unemployment + z_uninsured + z_income + z_age65 +     z_log_population, data = dat, random = ~1 | provider_id,     method = ""ML"", control = model_control)",3,18,-18789.33665586722,-18663.69355616417,9412.66832793361,2 vs 3,127.74710625661464,3.830688972056823e-25
