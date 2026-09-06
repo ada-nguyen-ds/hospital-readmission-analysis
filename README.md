@@ -21,7 +21,7 @@ Hospital performance is not observed in isolation. This project integrates publi
 ## Analytical workflow
 
 1. Clean hospital identifiers, measures, ZIP codes, and county FIPS values.
-2. validate key uniqueness and resolve a many-to-many ZIP-to-county join.
+2. Validate key uniqueness and resolve a many-to-many ZIP-to-county join.
 3. Join hospital characteristics, CMS readmission performance, and county socioeconomic indicators.
 4. Engineer standardized predictors for comparable coefficient interpretation.
 5. Compare nested mixed-effects models using likelihood-ratio tests, AIC, and BIC.
