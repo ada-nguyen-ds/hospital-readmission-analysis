@@ -1,74 +1,103 @@
 # Hospital Readmission Analysis
 
-## Project question
+> **Community context matters:** after adjusting for hospital characteristics and readmission condition, county poverty, unemployment, and population size remained associated with higher CMS excess readmission ratios.
 
-How do hospital characteristics and county socioeconomic conditions relate to CMS excess readmission ratios?
+## Project at a glance
 
-## Portfolio highlights
+| Scope | Value |
+|---|---:|
+| Hospital-condition observations | **7,944** |
+| Hospitals | **2,444** |
+| Counties | **1,197** |
+| Observations with ERR > 1 | **55%** |
+| Hospital-level ICC | **23%** |
 
-- **7,944** hospital-condition observations
-- **2,444** hospitals across **1,197** counties
-- **55%** of analyzed observations had an excess readmission ratio at or above 1
-- Approximately **23%** of residual variation occurred between hospitals
+## Business and research question
 
-## Why this project matters
+How do hospital characteristics and county socioeconomic conditions relate to CMS excess readmission ratios (ERR)?
 
-Hospital readmission performance may reflect both hospital characteristics and the communities hospitals serve. This project combines public hospital performance data with county socioeconomic indicators and accounts for repeated condition-level observations within each hospital.
+Hospital performance is not observed in isolation. This project integrates public hospital-quality data with county socioeconomic indicators, then models repeated condition-level measurements within hospitals to distinguish hospital-level variation from measured community context.
 
-## Data sources
+## Analytical workflow
 
-- CMS Hospital Readmissions Reduction Program data
-- CMS hospital characteristics
-- ZIP and county FIPS crosswalk data
-- Area Health Resources Files
+1. Clean hospital identifiers, measures, ZIP codes, and county FIPS values.
+2. validate key uniqueness and resolve a many-to-many ZIP-to-county join.
+3. Join hospital characteristics, CMS readmission performance, and county socioeconomic indicators.
+4. Engineer standardized predictors for comparable coefficient interpretation.
+5. Compare nested mixed-effects models using likelihood-ratio tests, AIC, and BIC.
+6. Fit the final model with REML and export tables, visualizations, and an Excel report.
 
-Raw source extracts are excluded from the repository to keep it lightweight and avoid redistributing large source files. The README and analysis workflow identify the data needed to reproduce the project.
+## Statistical model
 
-## Data preparation
+A **linear mixed-effects model** was fitted in R with `nlme`.
 
-The workflow:
+- **Outcome:** excess readmission ratio
+- **Fixed effects:** readmission measure, ownership, emergency services, poverty, unemployment, uninsured rate, income, age 65+, and log population
+- **Random effect:** hospital-level intercept
+- **Diagnostics and comparison:** likelihood-ratio tests, confidence intervals, AIC, BIC, and intraclass correlation
 
-1. Cleans hospital identifiers, measure names, ZIP codes, and county FIPS values.
-2. Filters invalid or incomplete readmission records.
-3. Joins hospital information to county socioeconomic indicators.
-4. Corrects a many-to-many ZIP-to-county join that created duplicated hospital-measure rows.
-5. Standardizes socioeconomic predictors for comparable model interpretation.
-6. Exports analysis-ready and Tableau-ready results.
-
-## Statistical method
-
-The project uses a **linear mixed-effects model** fitted in R with `nlme`.
-
-- **Outcome:** Excess readmission ratio
-- **Fixed effects:** Readmission measure, ownership, emergency services, poverty, unemployment, uninsured rate, income, age 65+, and log population
-- **Random effect:** Hospital-level intercept
-- **Model checks:** Likelihood-ratio tests, confidence intervals, AIC, BIC, and intraclass correlation
-
-The random intercept accounts for multiple condition-level observations recorded for the same hospital.
+The random intercept accounts for multiple condition-level observations from the same hospital.
 
 ## Key findings
 
-After adjustment, higher county poverty, unemployment, and population size remained associated with higher excess readmission ratios.
+- County poverty: approximately **+0.0082 ERR per 1 SD**
+- County unemployment: approximately **+0.0069 ERR per 1 SD**
+- Log county population: approximately **+0.0060 ERR per 1 SD**
+- Approximately **23%** of residual variation occurred between hospitals
 
-- Poverty: approximately **+0.0082** ERR per 1 SD
-- Unemployment: approximately **+0.0069** ERR per 1 SD
-- Log population: approximately **+0.0060** ERR per 1 SD
-- Hospital-level intraclass correlation: approximately **23%**
+These are adjusted associations, not causal effects.
 
-These results describe adjusted associations and do not establish causation.
+![Adjusted socioeconomic associations with ERR](visuals/04_ses_coefficient_plot.png)
+
+## Repository structure
+
+```text
+R/
+  hospital_readmission_full.R       # Complete cleaning, joins, modeling, and export pipeline
+data/
+  README.md                         # Required inputs and placement instructions
+output/
+  data_quality_audit.csv
+  model_comparison.csv
+  mixed_model_coefficients.csv
+  model_statistics.csv
+  summary_by_measure.csv
+  summary_by_ownership.csv
+  summary_overall.csv
+visuals/
+  01_err_distribution.png
+  02_err_by_ownership.png
+  03_mean_err_by_measure.png
+  04_ses_coefficient_plot.png
+  05_hospital_random_effects.png
+report/
+  Khanh_Nguyen_Hospital_Readmission_Analysis.pdf
+  Hospital_Readmission_Analysis_Report.xlsx
+```
+
+Raw source extracts are not committed because of their size and redistribution considerations. See [data/README.md](data/README.md) for the four required public inputs.
 
 ## Reports
 
-- [Live HTML report](https://ada-nguyen-ds.github.io/hospital-readmission-analysis/)
-- [Download the PDF report](https://github.com/ada-nguyen-ds/hospital-readmission-analysis/blob/main/readmissions%20report.pdf)
+- [Portfolio-ready PDF report](report/Khanh_Nguyen_Hospital_Readmission_Analysis.pdf)
+- [Formatted Excel analysis report](report/Hospital_Readmission_Analysis_Report.xlsx)
+- [Model coefficients](output/mixed_model_coefficients.csv)
+- [Model comparison](output/model_comparison.csv)
+
+## Reproduce the analysis
+
+1. Clone or download this repository.
+2. Place the four source CSV files listed in [data/README.md](data/README.md) inside `data/`.
+3. Open `hospital_readmission_analysis.Rproj`.
+4. Install the required packages if needed.
+5. Run:
+
+```r
+source("R/hospital_readmission_full.R")
+```
+
+The script validates inputs and joins, fits the models, and rebuilds the files in `output/`, `visuals/`, and `report/`.
 
 ## Tools
 
-R, dplyr, readr, stringr, ggplot2, nlme, Excel, and Tableau-ready exports
-
-## Next improvements
-
-- Add a concise data dictionary and source-download instructions
-- Organize analysis scripts and outputs into a clear project structure
-- Add a dashboard screenshot and direct Tableau link
-- Add reproducibility instructions and package versions
+**R · dplyr · readr · stringr · ggplot2 · nlme · here · openxlsx · Excel · Tableau-ready data**
