@@ -79,7 +79,7 @@ Raw source extracts are not committed because of their size and redistribution c
 
 ## Reports
 
-- [Portfolio-ready PDF report](report/Khanh_Nguyen_Hospital_Readmission_Analysis.pdf)
+- [Portfolio-ready PDF report](report/Khanh_Nguyen_Hospital_Readmission_Analysis_Portfolio.pdf)
 - [Formatted Excel analysis report](report/Hospital_Readmission_Analysis_Report.xlsx)
 - [Model coefficients](output/mixed_model_coefficients.csv)
 - [Model comparison](output/model_comparison.csv)
