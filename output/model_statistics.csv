@@ -1,0 +1,10 @@
+metric,value
+Observations,7944
+Hospitals,2444
+Counties,1197
+Hospital random-intercept variance,0.001337481
+Residual variance,0.004482004
+Intraclass correlation,0.22982806897861235
+Intraclass correlation percent,22.982806897861234
+AIC_ML,-18789.33665586722
+BIC_ML,-18663.69355616417
