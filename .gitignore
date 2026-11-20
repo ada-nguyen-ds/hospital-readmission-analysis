@@ -33,3 +33,10 @@ output/tableau_model_complete.csv
 # Generated documentation
 docs/
 rsconnect/
+
+# Local Shiny deployment and editor state
+**/rsconnect/
+**/.Rproj.user/
+**/.Rhistory
+**/.RData
+.Renviron.*

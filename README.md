@@ -2,6 +2,21 @@
 
 > **Community context matters:** after adjusting for hospital characteristics and readmission condition, county poverty, unemployment, and population size remained associated with higher CMS excess readmission ratios.
 
+## Interactive R Shiny dashboard
+
+**[Open the live dashboard](https://01a1e25e-f806-5dfe-ea5b-43da37bf67d3.share.connect.posit.cloud/)** · **[App source and setup](shiny-app/README.md)**
+
+Explore 2,444 hospitals and 7,944 hospital-condition records through an interactive U.S. map, condition/procedure and ownership filters, and community-context charts. The app includes descriptive statistics, Pearson correlations and fitted linear trends, alongside clearly labeled results from the original adjusted model.
+
+To run locally from the repository root:
+
+```r
+install.packages(c("shiny", "bslib", "readr", "dplyr", "ggplot2", "plotly", "scales"))
+shiny::runApp("shiny-app")
+```
+
+The app includes a compressed analytical snapshot of public hospital- and county-level data. Raw source extracts are still excluded. App summaries are descriptive; county characteristics are not individual patient attributes.
+
 ## Project at a glance
 
 | Scope | Value |
@@ -100,4 +115,4 @@ The script validates inputs and joins, fits the models, and rebuilds the files i
 
 ## Tools
 
-**R · dplyr · readr · stringr · ggplot2 · nlme · here · openxlsx · Excel · Tableau-ready data**
+**R · Shiny · bslib · plotly · dplyr · readr · stringr · ggplot2 · nlme · here · openxlsx · Excel · Tableau-ready data**
