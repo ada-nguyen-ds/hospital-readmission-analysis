@@ -72,4 +72,4 @@ The public instance runs on Posit Connect Cloud. To publish your own copy, publi
 
 ## Author
 
-Khanh Nguyen. Independent analysis using public data; no affiliation with CMS or HRSA is implied. Dashboard development supported by ChatGPT.
+Khanh Nguyen. Independent analysis using public data; no affiliation with CMS or HRSA is implied. 
